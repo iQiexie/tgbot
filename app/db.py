@@ -6,7 +6,7 @@ from app.patches import WebappData
 from config import DB_PATH
 
 
-async def init_db():
+async def init_db() -> None:
     async with aiosqlite.connect(DB_PATH) as db:
         await db.execute(
             """
@@ -27,34 +27,31 @@ async def init_db():
 
 
 async def insert_webapp_data(data: WebappData) -> bool:
-    try:
-        async with aiosqlite.connect(DB_PATH) as db:
-            # Convert is_premium to integer for SQLite (which doesn't have a native boolean type)
-            is_premium_int = 1 if data.is_premium else 0 if data.is_premium is not None else None
+    async with aiosqlite.connect(DB_PATH) as db:
+        # Convert is_premium to integer for SQLite (which doesn't have a native boolean type)
+        is_premium_int = 1 if data.is_premium else 0 if data.is_premium is not None else None
 
-            # Insert or replace user data using named parameters
-            await db.execute(
-                """
-            INSERT OR REPLACE INTO users
-            (telegram_id, language_code, username, first_name, last_name, is_premium, photo_url, start_param)
-            VALUES (:telegram_id, :language_code, :username, :first_name, :last_name, :is_premium, :photo_url, :start_param)
-            """,
-                {
-                    "telegram_id": data.telegram_id,
-                    "language_code": data.language_code,
-                    "username": data.username,
-                    "first_name": data.first_name,
-                    "last_name": data.last_name,
-                    "is_premium": is_premium_int,
-                    "photo_url": data.photo_url,
-                    "start_param": data.start_param,
-                },
-            )
-            await db.commit()
-            return True
-    except Exception as e:
-        print(f"Error inserting WebappData: {e}")
-        return False
+        # Insert or replace user data using named parameters
+        await db.execute(
+            """
+        INSERT OR REPLACE INTO users
+        (telegram_id, language_code, username, first_name, last_name, is_premium, photo_url, start_param)
+        VALUES (:telegram_id, :language_code, :username, :first_name, :last_name, :is_premium,
+        :photo_url, :start_param)
+        """,
+            {
+                "telegram_id": data.telegram_id,
+                "language_code": data.language_code,
+                "username": data.username,
+                "first_name": data.first_name,
+                "last_name": data.last_name,
+                "is_premium": is_premium_int,
+                "photo_url": data.photo_url,
+                "start_param": data.start_param,
+            },
+        )
+        await db.commit()
+        return True
 
 
 async def get_user_by_telegram_id(telegram_id: int) -> Optional[dict]:

@@ -11,7 +11,7 @@ router = Router()
 
 
 @router.message(CommandStart())
-async def command_start(message: Message):
+async def command_start(message: Message) -> None:
     await insert_webapp_data(
         data=WebappData(
             telegram_id=message.from_user.id,

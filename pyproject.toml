@@ -1,0 +1,88 @@
+[tool.poetry]
+name = "game app"
+version = "0.1.0"
+description = "Game app application with Telegram bot integration"
+authors = ["github.com/iqiexie"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.110.0"
+uvicorn = "^0.27.0"
+aiogram = "^3.3.0"
+aiosqlite = "^0.19.0"
+orjson = "^3.9.10"
+starlette = "^0.36.3"
+structlog = "^25.2.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.4.0"
+black = "^23.7.0"
+isort = "^5.12.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+
+[tool.black]
+line-length = 119
+
+
+[tool.isort]
+profile = "black"
+sections = ["FUTURE", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
+
+
+[tool.ruff]
+line-length = 119
+exclude = [
+    "__pycache__",
+    ".git",
+    "test*.py",
+    "temp*.py",
+    "cron",
+    "locustfile.py",
+    "logs.py",
+]
+target-version = "py310"
+
+
+[tool.ruff.lint]
+fixable = ["ALL"]
+unfixable = ["ERA001"]
+select = [
+    "E", # pycodestyle (Error)
+    "W", # pycodestyle (Warning)
+    "F", # Pyflakes
+    "PL", # Pylint
+    "ANN", # flake8-annotations
+    "B", # flake8-bugbear
+    "ERA", # eradicate
+    "I", # isort
+    "ARG", # flake8-unused-arguments
+    "N", # pep8-naming,
+    "S", # flake8-bandit
+    "T20", # flake8-print
+    "Q", # flake8-quotes
+]
+ignore = [
+    "ANN002", # Missing type annotation for `*args`
+    "ANN003", # Missing type annotation for `**kwargs`
+    "ANN101", # Missing type annotation for `self` in method
+    "ANN102", # Missing type annotation for `cls` in classmethod
+    "ANN204", # Missing return type annotation for special method
+    "ANN401", #  Dynamically typed expressions (typing.Any) are disallowed
+    "B008", # Do not perform function call in argument defaults
+    "B904", # Within an except clause, raise exceptions with `raise ... from err` or `raise ... from None`
+    "N818", # Exception name should be named with an Error suffix,
+    "PLR0911", # Too many return statements
+    "PLR0912", # Too many branches
+    "PLR0913", # Too many arguments to function call
+    "PLR0915", # Too many statements
+    "S101", # Use of assert detected
+]
+
+[tool.ruff.lint.flake8-quotes]
+inline-quotes = "double"

@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: ../
+      dockerfile: ./game-deploy/Dockerfile
+    container_name: game-app
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../:/usr/app/
+    command: uvicorn app.main:get_app --host 0.0.0.0 --port 8000 --factory
