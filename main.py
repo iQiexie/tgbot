@@ -1,9 +1,8 @@
 from contextlib import asynccontextmanager
 from typing import Annotated, Any
+
 from aiogram.methods import TelegramMethod
-from fastapi import FastAPI
-from fastapi import HTTPException
-from fastapi import APIRouter, Body, Depends
+from fastapi import APIRouter, Body, Depends, FastAPI, HTTPException
 from fastapi.responses import ORJSONResponse
 from fastapi.security import APIKeyHeader
 from starlette import status
@@ -11,13 +10,16 @@ from starlette import status
 from config import TELEGRAM_BOT_WEBHOOK_SECRET
 from db import init_db
 from dispatcher import root_dispatcher
-from patches import bot
-from patches import prepare_value
-from utils import struct_log
 from game import endpoints
+from patches import bot, prepare_value
+from utils import struct_log
 
 router = APIRouter(tags=["Telegram callback"], prefix="/api/v1")
-telegram_auth_header = APIKeyHeader(name="X-Telegram-Bot-Api-Secret-Token", scheme_name="AuthTelegram", auto_error=True)
+telegram_auth_header = APIKeyHeader(
+    name="X-Telegram-Bot-Api-Secret-Token",
+    scheme_name="AuthTelegram",
+    auto_error=True,
+)
 
 
 def auth_telegram(token: str = Depends(telegram_auth_header)) -> bool:

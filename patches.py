@@ -5,7 +5,6 @@ import hmac
 import json
 import os
 import secrets
-from contextlib import asynccontextmanager
 from enum import Enum
 from operator import itemgetter
 from typing import Any, Dict
@@ -16,16 +15,16 @@ from aiogram import Bot as _Bot
 from aiogram.client.default import Default
 from aiogram.exceptions import TelegramRetryAfter
 from aiogram.types import InputFile, TelegramObject
-from fastapi import FastAPI
 from fastapi import HTTPException
-from pydantic import BaseModel
-from pydantic import Field
+from pydantic import BaseModel, Field
 from starlette import status
 
-from config import AUTH_CHECK_TELEGRAM_TOKEN
-from config import TELEGRAM_BOT_TOKEN
-from config import TELEGRAM_BOT_WEBHOOK_HOST
-from config import TELEGRAM_BOT_WEBHOOK_SECRET
+from config import (
+    AUTH_CHECK_TELEGRAM_TOKEN,
+    TELEGRAM_BOT_TOKEN,
+    TELEGRAM_BOT_WEBHOOK_HOST,
+    TELEGRAM_BOT_WEBHOOK_SECRET,
+)
 
 logger = structlog.stdlib.get_logger()
 

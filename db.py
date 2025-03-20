@@ -1,12 +1,15 @@
-import aiosqlite
 from typing import Optional
+
+import aiosqlite
+
 from config import DB_PATH
 from patches import WebappData
 
 
 async def init_db():
     async with aiosqlite.connect(DB_PATH) as db:
-        await db.execute('''
+        await db.execute(
+            """
         CREATE TABLE IF NOT EXISTS users (
             telegram_id INTEGER PRIMARY KEY,
             language_code TEXT,
@@ -18,7 +21,8 @@ async def init_db():
             start_param TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
-        ''')
+        """
+        )
         await db.commit()
 
 
@@ -29,20 +33,23 @@ async def insert_webapp_data(data: WebappData) -> bool:
             is_premium_int = 1 if data.is_premium else 0 if data.is_premium is not None else None
 
             # Insert or replace user data using named parameters
-            await db.execute('''
+            await db.execute(
+                """
             INSERT OR REPLACE INTO users
             (telegram_id, language_code, username, first_name, last_name, is_premium, photo_url, start_param)
             VALUES (:telegram_id, :language_code, :username, :first_name, :last_name, :is_premium, :photo_url, :start_param)
-            ''', {
-                "telegram_id": data.telegram_id,
-                "language_code": data.language_code,
-                "username": data.username,
-                "first_name": data.first_name,
-                "last_name": data.last_name,
-                "is_premium": is_premium_int,
-                "photo_url": data.photo_url,
-                "start_param": data.start_param
-            })
+            """,
+                {
+                    "telegram_id": data.telegram_id,
+                    "language_code": data.language_code,
+                    "username": data.username,
+                    "first_name": data.first_name,
+                    "last_name": data.last_name,
+                    "is_premium": is_premium_int,
+                    "photo_url": data.photo_url,
+                    "start_param": data.start_param,
+                },
+            )
             await db.commit()
             return True
     except Exception as e:

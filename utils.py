@@ -67,7 +67,7 @@ def format_value(value: str | float | int | Decimal) -> str | float | int | Deci
 
 
 def chunk_list(lst: list, size: int) -> list[list]:
-    return [lst[i: i + size] for i in range(0, len(lst), size)]
+    return [lst[i : i + size] for i in range(0, len(lst), size)]
 
 
 async def safe_delete(message: Message | CallbackQuery | int, bot: "Bot" = None) -> None:

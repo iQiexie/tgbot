@@ -1,13 +1,11 @@
 from typing import Annotated
 
 from aiogram.types import LabeledPrice
-from fastapi import APIRouter
-from fastapi import Depends
+from fastapi import APIRouter, Depends
 from fastapi.security import APIKeyHeader
 
 from game.dto import InvoiceData
-from patches import WebappData
-from patches import bot
+from patches import WebappData, bot
 
 router = APIRouter(tags=["Game endpoints"], prefix="/api/v1")
 AuthUserHeader = APIKeyHeader(name="token", scheme_name="AuthUser", auto_error=True)
