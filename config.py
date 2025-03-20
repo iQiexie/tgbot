@@ -1,8 +1,8 @@
 TELEGRAM_BOT_WEBHOOK_SECRET = "admin"  # noqa
-TELEGRAM_BOT_TOKEN = "7740451156:AAGSB24S5mW4ylAuLsmNVxg6RgIZorOQyRo"  # noqa
-TELEGRAM_BOT_WEBHOOK_HOST = "https://winning-polite-jaguar.ngrok-free.app"
+TELEGRAM_BOT_TOKEN = "7614481386:AAFN3L7SDcMAlKQnijk6KKUswAJ-NU9hVIs"  # noqa
+TELEGRAM_BOT_WEBHOOK_HOST = "autobrain.ai"
 
-FRONTEND_URL = "https://neon-hacker-quest.lovable.app"
+FRONTEND_URL = "autobrain.ai"
 
 AUTH_CHECK_TELEGRAM_TOKEN = True
 
