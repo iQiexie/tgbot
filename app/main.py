@@ -12,6 +12,7 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 from app.db import init_db
 from app.dispatcher import root_dispatcher
 from app.game import endpoints
+from app.logs import LoggingMiddleware
 from app.patches import bot, prepare_value
 from app.utils import struct_log
 from config import TELEGRAM_BOT_WEBHOOK_SECRET
@@ -84,6 +85,8 @@ def get_app() -> FastAPI:
         TrustedHostMiddleware,
         allowed_hosts=["*"],
     )
+
+    fastapi.add_middleware(LoggingMiddleware)
 
     fastapi.include_router(router)
     fastapi.include_router(endpoints.router)
