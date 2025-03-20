@@ -1,3 +1,4 @@
+from contextlib import asynccontextmanager
 from typing import Annotated, Any
 from aiogram.methods import TelegramMethod
 from fastapi import FastAPI
@@ -8,6 +9,7 @@ from fastapi.security import APIKeyHeader
 from starlette import status
 
 from config import TELEGRAM_BOT_WEBHOOK_SECRET
+from db import init_db
 from dispatcher import root_dispatcher
 from patches import bot
 from patches import prepare_value
@@ -56,8 +58,15 @@ async def webhook(_: Annotated[bool, Depends(auth_telegram)], body: Any = Body()
     )
 
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):  # noqa
+    await init_db()
+    await bot.setup()
+    yield
+
+
 def get_app() -> FastAPI:
-    fastapi = FastAPI(lifespan=bot.setup)
+    fastapi = FastAPI(lifespan=lifespan)
     fastapi.include_router(router)
     fastapi.include_router(endpoints.router)
     return fastapi

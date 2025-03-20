@@ -59,10 +59,8 @@ class Bot(_Bot):
             await asyncio.sleep(e.retry_after)
             await self._setup_webhook()
 
-    @asynccontextmanager
-    async def setup(self, app: FastAPI) -> None:  # noqa
+    async def setup(self) -> None:
         await self._setup_webhook()
-        yield
 
     def auth_webapp(self, webapp_data: str) -> WebappData:
         parsed_data = dict(parse_qsl(webapp_data))
