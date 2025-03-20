@@ -1,6 +1,7 @@
 from typing import Optional
 
 import aiosqlite
+from aiogram.types import SuccessfulPayment
 
 from app.patches import WebappData
 from config import DB_PATH
@@ -23,6 +24,28 @@ async def init_db() -> None:
         )
         """
         )
+        
+        await db.execute(
+            """
+        CREATE TABLE IF NOT EXISTS transactions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            telegram_id INTEGER,
+            currency TEXT,
+            total_amount INTEGER,
+            invoice_payload TEXT,
+            telegram_payment_charge_id TEXT,
+            provider_payment_charge_id TEXT,
+            subscription_expiration_date INTEGER,
+            is_recurring BOOLEAN,
+            is_first_recurring BOOLEAN,
+            shipping_option_id TEXT,
+            order_info TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (telegram_id) REFERENCES users(telegram_id)
+        )
+        """
+        )
+        
         await db.commit()
 
 
@@ -63,3 +86,37 @@ async def get_user_by_telegram_id(telegram_id: int) -> Optional[dict]:
             if row:
                 return dict(row)
             return None
+
+
+async def insert_transaction(payment: SuccessfulPayment, user_id: int) -> bool:
+    async with aiosqlite.connect(DB_PATH) as db:
+        # Convert boolean values to integers for SQLite
+        is_recurring_int = 1 if payment.is_recurring else 0 if payment.is_recurring is not None else None
+        is_first_recurring_int = 1 if payment.is_first_recurring else 0 if payment.is_first_recurring is not None else None
+
+        await db.execute(
+            """
+        INSERT INTO transactions
+        (telegram_id, currency, total_amount, invoice_payload, telegram_payment_charge_id,
+        provider_payment_charge_id, subscription_expiration_date, is_recurring, is_first_recurring,
+        shipping_option_id, order_info)
+        VALUES (:telegram_id, :currency, :total_amount, :invoice_payload, :telegram_payment_charge_id,
+        :provider_payment_charge_id, :subscription_expiration_date, :is_recurring, :is_first_recurring,
+        :shipping_option_id, :order_info)
+        """,
+            {
+                "telegram_id": user_id,
+                "currency": payment.currency,
+                "total_amount": payment.total_amount,
+                "invoice_payload": payment.invoice_payload,
+                "telegram_payment_charge_id": payment.telegram_payment_charge_id,
+                "provider_payment_charge_id": payment.provider_payment_charge_id,
+                "subscription_expiration_date": payment.subscription_expiration_date,
+                "is_recurring": is_recurring_int,
+                "is_first_recurring": is_first_recurring_int,
+                "shipping_option_id": payment.shipping_option_id,
+                "order_info": payment.order_info,
+            },
+        )
+        await db.commit()
+        return True

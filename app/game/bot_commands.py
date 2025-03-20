@@ -1,3 +1,5 @@
+import logging
+
 from aiogram import F
 from aiogram import Router
 from aiogram.filters import CommandStart
@@ -5,6 +7,7 @@ from aiogram.types import InlineKeyboardButton, Message, WebAppInfo
 from aiogram.types import PreCheckoutQuery
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
+from app.db import insert_transaction
 from app.db import insert_webapp_data
 from app.patches import WebappData
 from config import FRONTEND_URL
@@ -51,4 +54,9 @@ async def pre_checkout_handler(pre_checkout_query: PreCheckoutQuery) -> None:
 async def successful_payment(message: Message) -> None:
     payment = message.successful_payment
     user_id = int(payment.invoice_payload)
+
+    try:
+        await insert_transaction(payment=payment, user_id=user_id)
+    except Exception as e:
+        logging.error(f"Error while inserting transaction: {e=}")
 
