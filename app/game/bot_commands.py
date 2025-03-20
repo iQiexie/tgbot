@@ -1,6 +1,8 @@
+from aiogram import F
 from aiogram import Router
 from aiogram.filters import CommandStart
 from aiogram.types import InlineKeyboardButton, Message, WebAppInfo
+from aiogram.types import PreCheckoutQuery
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from app.db import insert_webapp_data
@@ -38,3 +40,15 @@ async def command_start(message: Message) -> None:
         text="Вступай в игру! 👇",
         reply_markup=reply_markup,
     )
+
+
+@router.pre_checkout_query()
+async def pre_checkout_handler(pre_checkout_query: PreCheckoutQuery) -> None:
+    await pre_checkout_query.answer(ok=True)
+
+
+@router.message(F.successful_payment)
+async def successful_payment(message: Message) -> None:
+    payment = message.successful_payment
+    user_id = int(payment.invoice_payload)
+
