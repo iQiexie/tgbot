@@ -10,7 +10,7 @@ from aiogram.exceptions import TelegramBadRequest
 from aiogram.types import CallbackQuery, Message
 
 if TYPE_CHECKING:
-    from patches import Bot
+    from app.patches import Bot
 
 logger = structlog.stdlib.get_logger()
 

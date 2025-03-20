@@ -4,8 +4,8 @@ from aiogram.types import LabeledPrice
 from fastapi import APIRouter, Depends
 from fastapi.security import APIKeyHeader
 
-from game.dto import InvoiceData
-from patches import WebappData, bot
+from app.game.dto import InvoiceData
+from app.patches import WebappData, bot
 
 router = APIRouter(tags=["Game endpoints"], prefix="/api/v1")
 AuthUserHeader = APIKeyHeader(name="token", scheme_name="AuthUser", auto_error=True)

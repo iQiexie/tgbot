@@ -2,8 +2,8 @@ from typing import Optional
 
 import aiosqlite
 
+from app.patches import WebappData
 from config import DB_PATH
-from patches import WebappData
 
 
 async def init_db():

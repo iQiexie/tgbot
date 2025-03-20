@@ -4,8 +4,8 @@ from aiogram.types import InlineKeyboardButton, Message, WebAppInfo
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from config import FRONTEND_URL
-from db import insert_webapp_data
-from patches import WebappData
+from app.db import insert_webapp_data
+from app.patches import WebappData
 
 router = Router()
 
