@@ -6,6 +6,8 @@ from fastapi import APIRouter, Body, Depends, FastAPI, HTTPException
 from fastapi.responses import ORJSONResponse
 from fastapi.security import APIKeyHeader
 from starlette import status
+from starlette.middleware.cors import CORSMiddleware
+from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from app.db import init_db
 from app.dispatcher import root_dispatcher
@@ -68,7 +70,21 @@ async def lifespan(app: FastAPI):  # noqa
 
 
 def get_app() -> FastAPI:
-    fastapi = FastAPI(lifespan=lifespan, docs_url="/api/v1/docs")
+    fastapi = FastAPI(lifespan=lifespan, docs_url="/api/v1/docs", openapi_url="/api")
+
+    fastapi.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+
+    fastapi.add_middleware(
+        TrustedHostMiddleware,
+        allowed_hosts=["*"],
+    )
+
     fastapi.include_router(router)
     fastapi.include_router(endpoints.router)
     return fastapi
