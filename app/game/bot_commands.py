@@ -3,9 +3,9 @@ from aiogram.filters import CommandStart
 from aiogram.types import InlineKeyboardButton, Message, WebAppInfo
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from config import FRONTEND_URL
 from app.db import insert_webapp_data
 from app.patches import WebappData
+from config import FRONTEND_URL
 
 router = Router()
 

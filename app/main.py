@@ -9,11 +9,10 @@ from starlette import status
 
 from app.db import init_db
 from app.dispatcher import root_dispatcher
-from app.patches import bot
-from app.patches import prepare_value
+from app.game import endpoints
+from app.patches import bot, prepare_value
 from app.utils import struct_log
 from config import TELEGRAM_BOT_WEBHOOK_SECRET
-from app.game import endpoints
 
 router = APIRouter(tags=["Telegram callback"], prefix="/api/v1")
 telegram_auth_header = APIKeyHeader(
