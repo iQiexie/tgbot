@@ -68,7 +68,7 @@ async def lifespan(app: FastAPI):  # noqa
 
 
 def get_app() -> FastAPI:
-    fastapi = FastAPI(lifespan=lifespan)
+    fastapi = FastAPI(lifespan=lifespan, docs_url="/api/v1/docs")
     fastapi.include_router(router)
     fastapi.include_router(endpoints.router)
     return fastapi
