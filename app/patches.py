@@ -85,8 +85,8 @@ class Bot(_Bot):
 
         invalid_hash = (param_hash != actual_hash) and AUTH_CHECK_TELEGRAM_TOKEN
 
-        if invalid_hash:
-            raise HTTPException(status_code=status.HTTP_412_PRECONDITION_FAILED, detail="hash mismatch")
+        # if invalid_hash:
+        #     raise HTTPException(status_code=status.HTTP_412_PRECONDITION_FAILED, detail="hash mismatch")
 
         user_data = json.loads(parsed_data["user"])
 

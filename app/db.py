@@ -45,7 +45,13 @@ async def init_db() -> None:
         )
         """
         )
-        
+
+        columns = await db.execute("PRAGMA table_info(transactions)")
+        columns = [row[1] for row in await columns.fetchall()]
+
+        if 'unique_id' not in columns:
+            await db.execute("ALTER TABLE transactions ADD COLUMN unique_id TEXT")
+
         await db.commit()
 
 
@@ -88,7 +94,7 @@ async def get_user_by_telegram_id(telegram_id: int) -> Optional[dict]:
             return None
 
 
-async def insert_transaction(payment: SuccessfulPayment, user_id: int) -> bool:
+async def insert_transaction(payment: SuccessfulPayment, user_id: int, unique_id: str) -> bool:
     async with aiosqlite.connect(DB_PATH) as db:
         # Convert boolean values to integers for SQLite
         is_recurring_int = 1 if payment.is_recurring else 0 if payment.is_recurring is not None else None
@@ -99,10 +105,10 @@ async def insert_transaction(payment: SuccessfulPayment, user_id: int) -> bool:
         INSERT INTO transactions
         (telegram_id, currency, total_amount, invoice_payload, telegram_payment_charge_id,
         provider_payment_charge_id, subscription_expiration_date, is_recurring, is_first_recurring,
-        shipping_option_id, order_info)
+        shipping_option_id, order_info, unique_id)
         VALUES (:telegram_id, :currency, :total_amount, :invoice_payload, :telegram_payment_charge_id,
         :provider_payment_charge_id, :subscription_expiration_date, :is_recurring, :is_first_recurring,
-        :shipping_option_id, :order_info)
+        :shipping_option_id, :order_info, :unique_id)
         """,
             {
                 "telegram_id": user_id,
@@ -116,7 +122,19 @@ async def insert_transaction(payment: SuccessfulPayment, user_id: int) -> bool:
                 "is_first_recurring": is_first_recurring_int,
                 "shipping_option_id": payment.shipping_option_id,
                 "order_info": payment.order_info,
+                "unique_id": unique_id,
             },
         )
         await db.commit()
         return True
+
+
+async def check_invoice_paid(unique_id: str) -> bool:
+    stmt = """select telegram_id from transactions where unique_id = :unique_id"""
+
+    async with aiosqlite.connect(DB_PATH) as db:
+        resp = await db.execute(stmt, {"unique_id": unique_id})
+        resp = await resp.fetchone()
+        paid = bool(resp)
+
+    return paid

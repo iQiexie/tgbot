@@ -53,10 +53,11 @@ async def pre_checkout_handler(pre_checkout_query: PreCheckoutQuery) -> None:
 @router.message(F.successful_payment)
 async def successful_payment(message: Message) -> None:
     payment = message.successful_payment
-    user_id = int(payment.invoice_payload)
+    user_id, unique_id = payment.invoice_payload.split(";")
+    user_id = int(user_id)
 
     try:
-        await insert_transaction(payment=payment, user_id=user_id)
+        await insert_transaction(payment=payment, user_id=user_id, unique_id=unique_id)
     except Exception as e:
         logging.error(f"Error while inserting transaction: {e=}")
 
