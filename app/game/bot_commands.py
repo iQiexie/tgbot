@@ -32,7 +32,7 @@ async def command_start(message: Message) -> None:
         InlineKeyboardBuilder()
         .row(
             InlineKeyboardButton(
-                text="Играть",
+                text="Играть" if message.from_user.language_code == "ru" else "Play",
                 web_app=WebAppInfo(url=FRONTEND_URL),
             ),
         )
@@ -40,7 +40,7 @@ async def command_start(message: Message) -> None:
     )
 
     await message.answer(
-        text="Вступай в игру! 👇",
+        text="Вступай в игру! 👇" if message.from_user.language_code == "ru" else "Join the game! 👇",
         reply_markup=reply_markup,
     )
 
