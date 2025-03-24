@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends
 from fastapi.security import APIKeyHeader
 
 from app.db import check_invoice_paid
+from app.db import insert_webapp_data
 from app.game.dto import InvoiceRequest
 from app.game.dto import InvoiceResponse
 from app.game.dto import InvoiceStatusResponse
@@ -35,6 +36,11 @@ async def get_invoice_url(
     )
 
     return InvoiceResponse(data=resp, id=unique_id)
+
+
+@router.post(path="/register")
+async def register(current_user: Annotated[WebappData, Depends(get_current_user)]) -> None:
+    await insert_webapp_data(data=current_user)
 
 
 @router.post(path="/check_status")
